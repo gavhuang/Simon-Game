@@ -1,6 +1,17 @@
 const buttonColors = ["red", "blue", "green", "yellow"];
 const gamePattern = [];
 const userClickedPattern = [];
+let level = 0;
+let gameStart = false;
+
+// Detect keyboard press to begin game
+$(document).keypress(() => {
+    if (gameStart == false) {
+        gameStart = true;
+        $("#level-title").text("Level " + level);
+        nextSequence();
+    }
+});
 
 // User input in the game
 $(".btn").click((event) => {
@@ -8,7 +19,20 @@ $(".btn").click((event) => {
     userClickedPattern.push(userChosenColor);
     playSound(userChosenColor);
     animatePress(userChosenColor);
-})
+    // checkAnswer(userClickedPattern.length - 1);
+});
+
+// Compare userClickedPattern vs gamePattern
+$("").click(checkAnswer(userClickedPattern.length - 1));
+
+function checkAnswer(currentLevel) {
+    if (userClickedPattern[currentLevel] == gamePattern[currentLevel]) {
+        console.log("Success");
+    }
+    else {
+        console.log("Wrong");
+    }  
+}
 
 // Next color
 function nextSequence() {
@@ -22,6 +46,10 @@ function nextSequence() {
     // Flash the color and play a sound
     $("#" + randomChosenColor).fadeOut().fadeIn();
     playSound(randomChosenColor);
+
+    // Update the level
+    level++;
+    $("#level-title").text("Level " + level);
 }
 
 // Play sound
