@@ -1,6 +1,6 @@
 const buttonColors = ["red", "blue", "green", "yellow"];
-const gamePattern = [];
-const userClickedPattern = [];
+let gamePattern = [];
+let userClickedPattern = [];
 let level = 0;
 let gameStart = false;
 
@@ -19,37 +19,60 @@ $(".btn").click((event) => {
     userClickedPattern.push(userChosenColor);
     playSound(userChosenColor);
     animatePress(userChosenColor);
-    // checkAnswer(userClickedPattern.length - 1);
+    checkAnswer(userClickedPattern.length - 1);
 });
 
 // Compare userClickedPattern vs gamePattern
-$("").click(checkAnswer(userClickedPattern.length - 1));
-
 function checkAnswer(currentLevel) {
     if (userClickedPattern[currentLevel] == gamePattern[currentLevel]) {
-        console.log("Success");
+        
+        // If arrays match, then go to next sequence
+        if (userClickedPattern.length == gamePattern.length) {
+            setTimeout(() => {
+                nextSequence();
+                userClickedPattern = [];
+            }, 1000);
+        }
     }
     else {
-        console.log("Wrong");
-    }  
+        // Play the wrong.mp3, flash screen red, display GAME OVER
+        playSound("wrong");
+
+        $("body").addClass("game-over");
+        setTimeout(() => {
+            $("body").removeClass("game-over");
+        }, 200);
+
+        $("h1").text("Game over, Press Any Key to Restart");
+
+        startOver();
+    }
 }
 
 // Next color
 function nextSequence() {
-    // Get a color from the array
+    // Get a color
     const randomNumber = Math.floor(Math.random() * 4);
     const randomChosenColor = buttonColors[randomNumber];
 
     // Store it in gamePattern array
     gamePattern.push(randomChosenColor);
 
-    // Flash the color and play a sound
+    // Animation: flash the color and play a sound
     $("#" + randomChosenColor).fadeOut().fadeIn();
     playSound(randomChosenColor);
 
     // Update the level
     level++;
     $("#level-title").text("Level " + level);
+}
+
+// Restart game
+function startOver() {
+    gamePattern = [];
+    userClickedPattern = [];
+    level = 0;
+    gameStart = false;
 }
 
 // Play sound
